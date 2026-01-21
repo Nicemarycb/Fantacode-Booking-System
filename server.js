@@ -1,8 +1,7 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const showRoutes = require('./routes/shows');
-const cleanupJob = require('./jobs/cleanupExpiredHolds');
-require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,9 +22,6 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://nicecb0307_db_user:BW
 .then(() => {
   console.log('Connected to MongoDB');
   
-  // Start cleanup job
-  cleanupJob.start();
-  
   // Start server
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
@@ -38,7 +34,6 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://nicecb0307_db_user:BW
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  cleanupJob.stop();
   mongoose.connection.close(() => {
     process.exit(0);
   });

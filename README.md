@@ -7,7 +7,7 @@ A backend system for managing movie show seat bookings with support for concurre
 - **Seat Availability Management**: Track available, held, and booked seats for each show
 - **Concurrent Booking Support**: Handle multiple simultaneous booking requests using MongoDB transactions
 - **Temporary Seat Holds**: Reserve seats for a limited time (default 5 minutes) before booking
-- **Automatic Cleanup**: Background job removes expired holds every minute
+- **Automatic Cleanup**: MongoDB TTL index automatically removes expired holds
 - **Atomic Operations**: Prevents double-booking using MongoDB transactions
 - **System Resilience**: Handles system restarts, network failures, and incomplete bookings
 
@@ -115,7 +115,6 @@ The system uses a simple two-step booking process:
 **Key Components**:
 - **MongoDB Transactions**: Ensure only one user can book a seat at a time
 - **Automatic Expiration**: Held seats expire after timeout and become available again
-- **Background Cleanup**: Job runs every minute to remove expired holds
 - **Persistent Storage**: All data saved in MongoDB, survives system restarts
 
 **Seat States**:
@@ -134,12 +133,11 @@ The system uses a simple two-step booking process:
 - **Solution**: Two-step process (Hold → Book)
 - Seats are first held temporarily (default 5 minutes)
 - If not booked within the hold duration, they automatically become available
-- Background cleanup job removes expired holds every minute
+- MongoDB TTL index automatically removes expired holds
 
 ### 3. Seats Becoming Available Again After Timeout
 - **Solution**: 
   - MongoDB TTL index on `expiresAt` field automatically removes expired holds
-  - Background cleanup job runs every minute as a safety net
   - Availability checks clean expired holds before calculating availability
 
 ### 4. Users Refreshing Page or Retrying Requests
@@ -159,8 +157,8 @@ The system uses a simple two-step booking process:
 - **Solution**:
   - All state is persisted in MongoDB
   - On restart, the system loads all shows and their current state
-  - Background cleanup job resumes automatically
-  - Expired holds are cleaned up on the next cleanup cycle
+  - Expired holds are automatically cleaned by MongoDB TTL index
+  - Availability checks clean expired holds on-demand
   - No data loss occurs
 
 ## System Design Decisions
@@ -179,8 +177,7 @@ The system uses a simple two-step booking process:
 - **Default Duration**: 5 minutes (configurable per request)
 - **Cleanup Mechanisms**:
   1. MongoDB TTL index (automatic)
-  2. Background job (every minute, safety net)
-  3. On-demand cleanup (during availability checks)
+  2. On-demand cleanup (during availability checks)
 
 ### Error Handling
 - **409 Conflict**: When seats are not available or not held
