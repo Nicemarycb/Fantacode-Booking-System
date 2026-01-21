@@ -1,0 +1,25 @@
+{
+  "name": "movie-seat-booking-system",
+  "version": "1.0.0",
+  "description": "Backend system for managing movie show seat bookings",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "movie",
+    "booking",
+    "seats"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "mongoose": "^8.21.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
