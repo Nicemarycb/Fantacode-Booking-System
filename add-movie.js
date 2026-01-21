@@ -6,7 +6,7 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://nicecb0307_db_user
 
 async function addMovie() {
   try {
-    // Get movie name and seats from command line arguments
+    
     const movieName = process.argv[2];
     const totalSeats = parseInt(process.argv[3]);
 

@@ -8,7 +8,7 @@ const heldSeatSchema = new mongoose.Schema({
   expiresAt: {
     type: Date,
     required: true,
-    index: { expireAfterSeconds: 0 } // MongoDB TTL index
+    index: { expireAfterSeconds: 0 } 
   }
 }, { _id: false });
 
@@ -34,10 +34,10 @@ const showSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for faster queries
+
 showSchema.index({ name: 1 });
 
-// Virtual for available seats count
+
 showSchema.virtual('availableSeatsCount').get(function() {
   const heldSeatNumbers = this.heldSeats.map(h => h.seatNumber);
   const allOccupiedSeats = [...this.bookedSeats, ...heldSeatNumbers];
